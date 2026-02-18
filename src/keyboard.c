@@ -25,7 +25,7 @@ void keyboard_init(void) {
 }
 
 void keyboard_task(void) {
-    static uint8_t pressed_keys[6] = {0};  // HID supports up to 6 simultaneous keys
+    uint8_t pressed_keys[6] = {0};  // HID supports up to 6 simultaneous keys
     uint8_t key_count = 0;
     bool state_changed = false;
     
@@ -64,7 +64,8 @@ void keyboard_task(void) {
         gpio_put(row_pins[row], 0);
     }
     
-    // Send HID report if state changed or periodically
+    // Send HID report whenever state changes
+    // This includes key presses, releases, and transitions to no keys pressed
     if (state_changed) {
         usb_hid_send_report(pressed_keys, key_count);
     }
