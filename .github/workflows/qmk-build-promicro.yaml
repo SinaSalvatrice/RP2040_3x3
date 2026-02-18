@@ -18,7 +18,7 @@ jobs:
       - name: Checkout QMK firmware
         uses: actions/checkout@v4
         with:
-          repository: rp2040_3x3
+          repository: SinaSalvatrice/rp2040_3x3
           path: qmk_firmware
           fetch-depth: 1
 
