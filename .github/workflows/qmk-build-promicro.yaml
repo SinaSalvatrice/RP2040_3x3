@@ -1,53 +1,32 @@
-name: Build QMK firmware
+name: Build Keyboards
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ "main" ]
-    paths:
-      - "promicro_handwired_4x6/**"
-      - ".github/workflows/qmk-build.yml"
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-rp2040-3x3:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your keyboard repo
-        uses: actions/checkout@v4
-
-      - name: Checkout QMK firmware
-        uses: actions/checkout@v4
-        with:
-          repository: SinaSalvatrice/rp2040_3x3
-          path: qmk_firmware
-          fetch-depth: 1
-
-      - name: Install dependencies
+      - uses: actions/checkout@v3
+      - name: Build rp2040_3x3
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip avr-libc gcc-avr dfu-programmer dfu-util unzip zip
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r qmk_firmware/requirements.txt
+          make rp2040_3x3:default
 
-      - name: Copy keyboard into QMK tree
+  build-rp2040-2x3-encoder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build rp2040_2x3_encoder
         run: |
-          rm -rf keyboards/promicro_handwired_4x6
-          cp -r keyboards/promicro_handwired_4x6
+          make rp2040_2x3_encoder:via
 
-      - name: Build (keymap:sina)
-        working-directory: rp2040_3x3
+  build-promicro-4x6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build promicro_handwired_4x6
         run: |
-          python3 -m qmk compile -kb promicro_handwired_4x6 -km sina
-
-      - name: Collect artifacts
-        run: |
-          mkdir -p artifacts
-          cp -v qmk_firmware/.build/*.hex artifacts/ || true
-          cp -v qmk_firmware/*.hex artifacts/ || true
-          ls -la artifacts
-
-      - name: Upload HEX artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: qmk-hex
-          path: artifacts/*.hex
+          make promicro_handwired_4x6:default
