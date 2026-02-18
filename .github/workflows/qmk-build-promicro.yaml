@@ -18,7 +18,7 @@ jobs:
       - name: Checkout QMK firmware
         uses: actions/checkout@v4
         with:
-          repository: qmk/qmk_firmware
+          repository: rp2040_3x3
           path: qmk_firmware
           fetch-depth: 1
 
@@ -31,11 +31,11 @@ jobs:
 
       - name: Copy keyboard into QMK tree
         run: |
-          rm -rf qmk_firmware/keyboards/promicro_handwired_4x6
-          cp -r promicro_handwired_4x6 qmk_firmware/keyboards/promicro_handwired_4x6
+          rm -rf keyboards/promicro_handwired_4x6
+          cp -r keyboards/promicro_handwired_4x6
 
       - name: Build (keymap:sina)
-        working-directory: qmk_firmware
+        working-directory: rp2040_3x3
         run: |
           python3 -m qmk compile -kb promicro_handwired_4x6 -km sina
 
